@@ -3,71 +3,76 @@ class myPromise {
     #state = 'pending'
     #handlers = []
 
-    constructor(executor){
+    constructor(executor) {
         executor(this.#resolve.bind(this), this.#reject.bind(this))
     }
 
-    #reject(value){
+    #reject(value) {
         this.#changeState('rejected', value)
     }
-    #resolve(value){
+    #resolve(value) {
         this.#changeState('fulfilled', value)
     }
-    
-    #changeState(state, result){
-       
-        if(this.#state !== 'pending') return
+
+    #changeState(state, result) {
+
+        if (this.#state !== 'pending') return
         this.#state = state
         this.#result = result
         this.#runHandler()
     }
 
-    then(onFulfilled, onRejected){
-        return new myPromise((resolve, reject)=>{
+    then(onFulfilled, onRejected) {
+        return new myPromise((resolve, reject) => {
             this.#handlers.push({
                 onFulfilled,
                 onRejected,
                 resolve,
                 reject
             })
-            
+
             this.#runHandler()
         })
     }
     #runHandler() {
-        if(this.#state === 'pending') return
+        if (this.#state === 'pending') return
 
-        while(this.#handlers.length > 0) {
-            const {onFulfilled, onRejected, resolve, reject} = this.#handlers.shift()
-          
-            try {
-                if(this.#state === 'fulfilled') {
-                   
-                    
-                    const data = onFulfilled(this.#result)
-                    resolve(data)
-                } else if(this.#state === 'rejected') {
-                    const data = onRejected(this.#result)
-                    resolve(data)
+        setTimeout(()=>{
+            while (this.#handlers.length > 0) {
+                const { onFulfilled, onRejected, resolve, reject } = this.#handlers.shift()
+    
+                try {
+                    if (this.#state === 'fulfilled') {
+                        const data = onFulfilled(this.#result)
+                        resolve(data)
+                    } else if (this.#state === 'rejected') {
+                        const data = onRejected(this.#result)
+                        resolve(data)
+                    }
+                } catch (error) {
+                    reject(error)
                 }
-            } catch (error) {
-                reject(error)
             }
-        }
+        }, 0)
     }
 }
 
-let p = new myPromise((resolve, reject)=>{
-    reject(1)
+let p = new myPromise((resolve, reject) => {
+    setTimeout(()=>{
+        reject(1)
+        console.log(1);
+        
+    }, 0)
 })
-p.then((res)=>{
+p.then((res) => {
     console.log('成功1');
-    
-},(err)=>{
+
+}, (err) => {
     console.log('失败1')
-}).then((res)=>{
+}).then((res) => {
     console.log('成功2');
-    
-},(err)=>{
+
+}, (err) => {
     console.log('失败2')
 })
+console.log('执行');

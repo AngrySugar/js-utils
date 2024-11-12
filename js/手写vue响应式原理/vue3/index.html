@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>vue3原理</title>
+</head>
+<body>
+    <button id="btn">button</button>
+    <div id="app"></div>
+<!--    <button id="btn2">button</button>-->
+<!--    <div id="app2"></div>-->
+
+    <script type="module">
+        import { reactive, effect, ref } from './index.js'
+
+        const app = document.getElementById('app');
+        const btn = document.getElementById('btn');
+        // const app2 = document.getElementById('app2');
+        // const btn2 = document.getElementById('btn2');
+
+        const state = ref(0)
+        // const state2 = reactive({
+        //     age: 18,
+        //     obj:{
+        //     num: 0}})
+        // console.log('state2==>', state2.obj)
+
+
+        effect(() => {
+            app.textContent = state.value
+
+        })
+        // effect(()=> {
+        //     app2.textContent = state2.obj.num
+        // })
+
+        //
+        btn.addEventListener('click', () => {
+            state.value++
+            console.log('state.count ====>', state.value)
+        })
+        // btn2.addEventListener('click', () => {
+        //     state2.obj.num++
+        //     // console.log('state.count ====>', state2.obj.num)
+        // })
+    </script>
+</body>
+</html>
